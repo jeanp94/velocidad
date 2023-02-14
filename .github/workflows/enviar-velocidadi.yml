@@ -1,25 +1,18 @@
-name: Medición de velocidad de página y envío de resultado a WhatsApp
-on:
-  push:
-    branches:
-      - main
+name: Lighthouse Performance Test
+
+on: [push]
 
 jobs:
-  measure-speed-and-send-result:
+  lighthouse:
     runs-on: ubuntu-latest
     steps:
-      - name: Medir velocidad de página
-        run: |
-          # Comandos para medir velocidad de página y guardar resultado en archivo speed.txt
-          # Se recomienda utilizar una herramienta de prueba de velocidad de página web como Lighthouse o PageSpeed Insights.
-          # Ejemplo de cómo guardar el resultado en un archivo speed.txt:
-          echo "Velocidad de página: 80" > speed.txt
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Enviar resultado a WhatsApp
-        uses: twilio-labs/action-send-whatsapp@v3
-        with:
-          account_sid: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          auth_token: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          from: 'whatsapp:+14155238886' # número de teléfono de Twilio para enviar mensajes de WhatsApp
-          to: 'whatsapp:+51922656684' # número de teléfono del destinatario de WhatsApp
-          body: "La velocidad de la página es $(cat speed.txt)"
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run Lighthouse test
+        run: |
+          npx lighthouse https://www.mariaalmenara.pe --output json --output-path=./report.json
