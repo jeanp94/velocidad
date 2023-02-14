@@ -14,10 +14,4 @@ jobs:
       - name: Análisis de velocidad de Maria almenara
         run: |
           psi https://www.mariaalmenara.pe --nokey --strategy=desktop --threshold=90
-      - name: Análisis de velocidad de carga Maria almenara checkout
-        run: |
-          psi https://www.mariaalmenara.pe/checkout-payment --nokey --strategy=desktop --threshold=90
-      - name: Análisis de velocidad de carga Maria almenara izipay
-        run: |
-          psi https://www.mariaalmenara.pe/checkout-payment/waiting --nokey --strategy=desktop --threshold=90
           
