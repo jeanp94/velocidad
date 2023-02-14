@@ -1,59 +1,25 @@
-name: Enviar velocidad de página web a WhatsApp
-
+name: Medición de velocidad de página y envío de resultado a WhatsApp
 on:
-  schedule:
-    - cron: '*/5 * * * *' # Ejecutar todos los días a la medianoche (UTC)
+  push:
+    branches:
+      - main
 
 jobs:
-  enviar-velocidad:
+  measure-speed-and-send-result:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [9.x, 10.x, 12.x, 14.x, 16.x, 18.x]
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v2
+      - name: Medir velocidad de página
+        run: |
+          # Comandos para medir velocidad de página y guardar resultado en archivo speed.txt
+          # Se recomienda utilizar una herramienta de prueba de velocidad de página web como Lighthouse o PageSpeed Insights.
+          # Ejemplo de cómo guardar el resultado en un archivo speed.txt:
+          echo "Velocidad de página: 80" > speed.txt
 
-    - name: Setup Node.js ${{ matrix.node_version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node_version }}
-    - name: Install dependencies
-      run: npm install
-
-    - name: Send speed via WhatsApp
-      env:
-        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-        TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-        DEST_NUMBER: ${{ secrets.DEST_NUMBER }}
-        PAGE_URL: 'https://www.mariaalmenara.pe/'
-      run: |
-        const fetch = require('node-fetch');
-        const twilio = require('twilio');
-
-        const accountSid = process.env.TWILIO_ACCOUNT_SID;
-        const authToken = process.env.TWILIO_AUTH_TOKEN;
-        const twilioNumber = 'whatsapp:+14155238886'; // Número de Twilio para enviar mensajes de WhatsApp
-        const destNumber = process.env.DEST_NUMBER; // Número de teléfono de WhatsApp del destinatario
-        const pageUrl = process.env.PAGE_URL;
-
-        // Obtener la velocidad de la página con Google PageSpeed Insights
-        const url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(pageUrl)}&strategy=mobile`;
-        fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            const speed = data.loadingExperience.metrics.FIRST_CONTENTFUL_PAINT_MS.percentile;
-
-            // Enviar un mensaje de WhatsApp con la velocidad de la página
-            const message = `La velocidad de la página ${pageUrl} es de ${speed} ms.`;
-            const client = new twilio(accountSid, authToken);
-            client.messages.create({
-              from: twilioNumber,
-              to: destNumber,
-              body: message
-            })
-              .then(message => console.log("Mensaje enviado"))
-              .catch(error => console.error("Error al enviar el mensaje: ", error));
-          })
-          .catch(error => console.error("Error al obtener la velocidad de la página: ", error));
+      - name: Enviar resultado a WhatsApp
+        uses: twilio-labs/action-send-whatsapp@v3
+        with:
+          account_sid: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          auth_token: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          from: 'whatsapp:+14155238886' # número de teléfono de Twilio para enviar mensajes de WhatsApp
+          to: 'whatsapp:+51922656684' # número de teléfono del destinatario de WhatsApp
+          body: "La velocidad de la página es $(cat speed.txt)"
