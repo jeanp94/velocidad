@@ -1,23 +1,16 @@
-name: Python Application
-
+name: Medición de velocidad de carga de página web
 on:
   push:
     branches: [ main ]
-
 jobs:
-  build:
-
+  speed-test:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run application
-      run: python main.py
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Instalar dependencias
+        run: |
+          npm install -g psi
+      - name: Análisis de velocidad de carga
+        run: |
+          psi https://www.mariaalmenara.pe --nokey --strategy=mobile --threshold=90
