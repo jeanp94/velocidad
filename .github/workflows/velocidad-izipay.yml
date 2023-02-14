@@ -1,0 +1,17 @@
+name: Medición de velocidad de carga izipay
+on:
+  push:
+    branches: [ main ]
+jobs:
+  speed-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Instalar dependencias
+        run: |
+          npm install -g psi
+      - name: Análisis de velocidad de carga Maria almenara izipay
+        run: |
+          psi https://www.mariaalmenara.pe/checkout-payment/waiting --nokey --strategy=desktop --threshold=90
+          
