@@ -11,6 +11,13 @@ jobs:
       - name: Instalar dependencias
         run: |
           npm install -g psi
-      - name: Análisis de velocidad de carga
+      - name: Análisis de velocidad de Maria almenara
         run: |
-          psi https://www.mariaalmenara.pe --nokey --strategy=mobile --threshold=90
+          psi https://www.mariaalmenara.pe --nokey --strategy=desktop --threshold=90
+      - name: Análisis de velocidad de carga Maria almenara checkout
+        run: |
+          psi https://www.mariaalmenara.pe/checkout-payment --nokey --strategy=desktop --threshold=90
+      - name: Análisis de velocidad de carga Maria almenara izipay
+        run: |
+          psi https://www.mariaalmenara.pe/checkout-payment/waiting --nokey --strategy=desktop --threshold=90
+          
