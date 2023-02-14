@@ -1,0 +1,57 @@
+name: Enviar velocidad de página web a WhatsApp
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Ejecutar todos los días a la medianoche (UTC)
+
+jobs:
+  enviar-velocidad:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Send speed via WhatsApp
+      env:
+        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+        TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        DEST_NUMBER: ${{ secrets.DEST_NUMBER }}
+        PAGE_URL: 'https://www.example.com'
+      run: |
+        const fetch = require('node-fetch');
+        const twilio = require('twilio');
+
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        const twilioNumber = 'whatsapp:+14155238886'; // Número de Twilio para enviar mensajes de WhatsApp
+        const destNumber = process.env.DEST_NUMBER; // Número de teléfono de WhatsApp del destinatario
+        const pageUrl = process.env.PAGE_URL;
+
+        // Obtener la velocidad de la página con Google PageSpeed Insights
+        const url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(pageUrl)}&strategy=mobile`;
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            const speed = data.loadingExperience.metrics.FIRST_CONTENTFUL_PAINT_MS.percentile;
+
+            // Enviar un mensaje de WhatsApp con la velocidad de la página
+            const message = `La velocidad de la página ${pageUrl} es de ${speed} ms.`;
+            const client = new twilio(accountSid, authToken);
+            client.messages.create({
+              from: twilioNumber,
+              to: destNumber,
+              body: message
+            })
+              .then(message => console.log("Mensaje enviado"))
+              .catch(error => console.error("Error al enviar el mensaje: ", error));
+          })
+          .catch(error => console.error("Error al obtener la velocidad de la página: ", error));
