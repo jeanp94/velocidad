@@ -18,10 +18,11 @@ jobs:
       with:
         python-version: 3.x
 
-    - name: Install dependencies
+    - name: Install requests library
       run: python -m pip install requests
 
     - name: Test website speed
-      run: python main.py
+      run: |
+        python -c "import requests,time,os;start_time = time.time();response = requests.get(os.environ['URL']);end_time = time.time();load_time = end_time - start_time;print(f'Load time for {os.environ['URL']}: {load_time:.2f} seconds')"
       env:
-        URL: mariaalmenara.pe
+        URL: https://mariaalmenara.pe/
