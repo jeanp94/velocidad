@@ -24,4 +24,4 @@ jobs:
     - name: Test website speed
       run: python main.py
       env:
-        URL: https://www.mariaalmenara.pe
+        URL: mariaalmenara.pe
