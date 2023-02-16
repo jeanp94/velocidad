@@ -7,7 +7,9 @@ jobs:
       - name: Configurar el entorno de Python
         uses: actions/setup-python@v2 # Configurar el entorno de Python
         with:
-          python-version: '3.x' # Especificar la versión de Python que utilizas
+          python-version: '3.x' # Especificar la versión de Python que utilizas    
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
       - name: Instalar las dependencias
         run: pip install -r requirements.txt # Instalar las dependencias utilizando el archivo requirements.txt
       - name: Ejecutar el script de Python
