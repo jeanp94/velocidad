@@ -1,4 +1,11 @@
-url = 'https://www.mariaalmenara.pe'
+import requests
+import time
+import os
+
+url = os.environ['URL']
+start_time = time.time()
 response = requests.get(url)
-response_time = response.elapsed.total_seconds()
-print(f'Tiempo de respuesta: {response_time} segundos')
+end_time = time.time()
+
+load_time = end_time - start_time
+print(f"Load time for {url}: {load_time:.2f} seconds")
