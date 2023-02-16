@@ -1,0 +1,14 @@
+name: Nombre del flujo
+on: [push] # Activar el flujo cuando se haga un push al repositorio
+jobs:
+  ejecutar-script:
+    runs-on: ubuntu-latest # Ejecutar el trabajo en un contenedor de Ubuntu
+    steps:
+      - name: Configurar el entorno de Python
+        uses: actions/setup-python@v2 # Configurar el entorno de Python
+        with:
+          python-version: '3.x' # Especificar la versión de Python que utilizas
+      - name: Instalar las dependencias
+        run: pip install -r requirements.txt # Instalar las dependencias utilizando el archivo requirements.txt
+      - name: Ejecutar el script de Python
+        run: python main.py # Reemplazar "nombre-del-script.py" con el nombre de tu archivo de Python
