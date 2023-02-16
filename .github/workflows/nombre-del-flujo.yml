@@ -1,18 +1,27 @@
-name: Nombre del flujo
-on: [push] # Activar el flujo cuando se haga un push al repositorio
+name: Website Speed Test
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  ejecutar-script:
-    runs-on: ubuntu-latest # Ejecutar el trabajo en un contenedor de Ubuntu
+  test_speed:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Configurar el entorno de Python
-        uses: actions/setup-python@v2 # Configurar el entorno de Python
-        with:
-          python-version: '3.x' # Especificar la versión de Python que utilizas    
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-      - name: Install Python dependencies
-        uses: py-actions/py-dependency-install@v4
-        with:
-          path: "path/to/requirements.txt"
-      - name: Ejecutar el script de Python
-        run: python main.py # Reemplazar "nombre-del-script.py" con el nombre de tu archivo de Python
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install dependencies
+      run: python -m pip install requests
+
+    - name: Test website speed
+      run: python test_speed.py
+      env:
+        URL: https://www.mariaalmenara.pe/
