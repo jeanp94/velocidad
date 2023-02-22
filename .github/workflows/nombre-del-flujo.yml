@@ -6,23 +6,15 @@ on:
       - main
 
 jobs:
-  test_speed:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python 3.x
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
-
-    - name: Install requests library
-      run: python -m pip install requests
-
-    - name: Test website speed
-      run: |
-        python -c "import requests,time,os;start_time = time.time();response = requests.get(os.environ['URL']);end_time = time.time();load_time = end_time - start_time;print(f'Load time for {os.environ['URL']}: {load_time:.2f} seconds')"
-      env:
-        URL: https://mariaalmenara.pe/
+      - name: Measure performance
+        run: |
+          response=$(curl -s -X GET "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.mariaalmenara.pe/&strategy=desktop")
+          echo "$response" > results.json
+      - name: Upload results
+        uses: actions/upload-artifact@v2
+        with:
+          name: pagespeed-results
+          path: results.json
