@@ -1,0 +1,42 @@
+name: Enviar mensaje de WhatsApp
+on:
+  push:
+    branches:
+      - main
+jobs:
+  send-whatsapp-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar mensaje de WhatsApp
+        env:
+          WHATSAPP_NUMBER: ${{ secrets.WHATSAPP_NUMBER }}
+          GRAPH_API_ACCESS_TOKEN: ${{ secrets.GRAPH_API_ACCESS_TOKEN }}
+        run: |
+          curl -X POST "https://graph.facebook.com/v15.0/me/messages?access_token=$GRAPH_API_ACCESS_TOKEN" -d '{
+            "messaging_type": "MESSAGE_TAG",
+            "recipient": {
+              "phone_number": "'$WHATSAPP_NUMBER'"
+            },
+            "message": {
+              "attachment": {
+                "type": "template",
+                "payload": {
+                  "template_type": "button",
+                  "text": "Hola, ¿cómo estás?",
+                  "buttons": [
+                    {
+                      "type": "web_url",
+                      "url": "https://www.mariaalmenara.pe/",
+                      "title": "Visitar sitio web"
+                    },
+                    {
+                      "type": "postback",
+                      "title": "Ver opciones",
+                      "payload": "menu"
+                    }
+                  ]
+                }
+              }
+            },
+            "tag": "NON_PROMOTIONAL_SUBSCRIPTION"
+          }'
